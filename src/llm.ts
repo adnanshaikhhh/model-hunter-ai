@@ -1,6 +1,6 @@
 // src/llm.ts — Provider-abstracted classifier with failover.
-// Primary: Ollama local (free, $0, no key). Cloud fallbacks (OpenAI, NVIDIA NIM,
-// Groq, Gemini, OpenRouter) used only if Ollama is unavailable.
+// Primary: Ollama local (free, $0, no key). Cloud fallbacks in order:
+// Pollinations (free, no auth) -> OpenAI -> NVIDIA NIM -> Groq -> Gemini -> OpenRouter.
 
 import { z } from 'zod';
 import { config } from './config.js';
@@ -145,6 +145,27 @@ async function callOpenRouter(prompt: string, apiKey: string): Promise<string> {
   return (data.choices?.[0]?.message?.content || '').trim();
 }
 
+
+async function callPollinations(prompt: string): Promise<string> {
+  const res = await fetch('https://text.pollinations.ai/openai/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'openai-fast',
+      messages: [
+        { role: 'system', content: SYSTEM },
+        { role: 'user', content: prompt },
+      ],
+      max_tokens: 250,
+      temperature: 0,
+    }),
+    signal: AbortSignal.timeout(45000),
+  });
+  if (!res.ok) throw new Error('Pollinations HTTP ' + res.status);
+  const data = await res.json();
+  return (data.choices?.[0]?.message?.content || '').trim();
+}
+
 // --- Verdict parsing ---
 
 function parseVerdict(raw: string): Verdict {
@@ -168,6 +189,8 @@ export async function classifyOne(input: ClassifyInput): Promise<Verdict | null>
   const prompt = USER_TEMPLATE(input.title, input.excerpt ?? '');
   const providers = [
     ['Ollama', () => callOllama(prompt)],
+    // Pollinations.ai: free, no auth, no key needed. Try early since it's the most reliable in CI.
+    ['Pollinations', () => callPollinations(prompt)],
     config.openaiApiKey ? ['OpenAI', () => callOpenAI(prompt, 'gpt-4o-mini', config.openaiApiKey)] : null,
     config.nvidiaApiKey ? ['NVIDIA', () => callNvidia(prompt, config.nvidiaApiKey)] : null,
     config.groqApiKey ? ['Groq', () => callGroq(prompt, config.groqApiKey)] : null,
