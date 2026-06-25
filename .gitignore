@@ -8,3 +8,5 @@ data/*.sqlite-journal
 data/*.db
 coverage/
 .DS_Store
+.vercel
+.env*

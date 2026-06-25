@@ -6,11 +6,12 @@ import { logger } from '../src/logger.js';
 const SOURCES = [
   // ----- AI lab blogs (research + product launches) -----
   { name: 'OpenAI Blog', url: 'https://openai.com/blog/rss.xml', type: 'rss', category: 'research' },
-  { name: 'Anthropic News', url: 'https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/.gitignore', type: 'rss', category: 'research' },
+  { name: 'Google Research Blog', url: 'https://research.google/blog/rss/', type: 'rss', category: 'research' },
+  { name: 'Anthropic Claude Code Releases', url: 'https://github.com/anthropics/claude-code/releases.atom', type: 'rss', category: 'research' },
   { name: 'Google DeepMind Blog', url: 'https://deepmind.google/blog/rss.xml', type: 'rss', category: 'research' },
   { name: 'Hugging Face Blog', url: 'https://huggingface.co/blog/feed.xml', type: 'rss', category: 'research' },
-  { name: 'Mistral AI News', url: 'https://huggingface.co/MistralAI/api/feed.xml', type: 'rss', category: 'research' },
-  { name: 'Meta AI Research', url: 'https://about.fb.com/category/ai/feed/', type: 'rss', category: 'research' },
+  { name: 'Mistral AI News', url: 'https://github.com/mistralai/mistral-finetune/releases.atom', type: 'rss', category: 'research' },
+  { name: 'Meta AI Research', url: 'https://github.com/facebookresearch/metaseq/releases.atom', type: 'rss', category: 'research' },
 
   // ----- Aggregators (community discovery) -----
   { name: 'Hacker News (front page)', url: 'https://hnrss.org/frontpage', type: 'rss', category: 'newsletter' },
@@ -24,8 +25,8 @@ const SOURCES = [
   { name: 'HN Algolia (GPU)', url: 'https://hn.algolia.com/api/v1/search?tags=story&query=GPU%20grant', type: 'json', category: 'credits' },
 
   // ----- Newsletter aggregators (free credits / startup deals) -----
-  { name: 'TLDR AI', url: 'https://tldr.tech/newsletter/rss', type: 'rss', category: 'newsletter' },
-  { name: 'Ben Tossell’s Deals for Founders', url: 'https://producthunt.com/feed', type: 'rss', category: 'credits' },
+  { name: 'TLDR AI', url: 'https://tldr.tech/rss', type: 'rss', category: 'newsletter' },
+  { name: 'Ben Tossell’s Deals for Founders', url: 'https://www.producthunt.com/feed', type: 'rss', category: 'credits' },
 
   // ----- Provider status (incidents / promos) -----
   { name: 'OpenAI Status', url: 'https://status.openai.com/history.rss', type: 'rss', category: 'newsletter' },
