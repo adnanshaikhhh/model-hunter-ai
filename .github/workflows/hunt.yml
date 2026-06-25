@@ -20,6 +20,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore SQLite DB from cache
+        uses: actions/cache@v4
+        with:
+          path: data/model-hunter.sqlite
+          key: model-hunter-db-${{ github.run_id }}
+          restore-keys: |
+            model-hunter-db-
+
+      - name: Ensure data dir
+        run: mkdir -p data
+
       - name: Build
         run: npm run build
 
@@ -46,6 +57,13 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           RELEVANCE_THRESHOLD: '65'
           LOG_LEVEL: info
+
+      - name: Save SQLite DB to cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/model-hunter.sqlite
+          key: model-hunter-db-${{ github.run_id }}
 
       - name: Upload run log
         if: always()
